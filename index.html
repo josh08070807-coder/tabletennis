@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEXUS 桌球系統</title>
+  <title>NEXUS 桌球競技系統</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Teko:wght@300;600&display=swap" rel="stylesheet">
 
@@ -22,10 +22,13 @@
     body {
       font-family: 'Exo 2', sans-serif;
       background-color: var(--dark-bg);
-      /* 背景：深邃的徑向漸層，模擬宇宙深處的光 */
+      /* 背景：加入數位六角網格 (模擬科技球網) + 深空漸層 */
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(188, 19, 254, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 0% 100%, rgba(0, 243, 255, 0.15) 0%, transparent 50%);
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 50% 0%, rgba(188, 19, 254, 0.2) 0%, transparent 60%),
+        radial-gradient(circle at 0% 100%, rgba(0, 243, 255, 0.15) 0%, transparent 60%);
+      background-size: 30px 30px, 30px 30px, 100% 100%, 100% 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -33,17 +36,6 @@
       margin: 0;
       color: var(--text-main);
       overflow: hidden;
-    }
-
-    /* 背景流動網格 (增加層次感) */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(255, 0, 0, 0.02), rgba(255, 0, 0, 0.06));
-      background-size: 100% 2px, 3px 100%;
-      pointer-events: none;
-      z-index: -1;
     }
 
     /* --- 主卡片：玻璃擬態 --- */
@@ -54,253 +46,187 @@
       padding: 40px 30px;
       border-radius: 24px;
       text-align: center;
-      /* 邊框發光 */
       border: 1px solid var(--glass-border);
       box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 30px 60px rgba(0, 0, 0, 0.6),
         inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px); /* 強力模糊 */
+      backdrop-filter: blur(25px);
       position: relative;
       overflow: hidden;
     }
 
-    /* 卡片頂部的霓虹燈條 */
+    /* 卡片頂部光條 */
     .card::after {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
+      top: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, var(--purple), var(--cyan));
-      box-shadow: 0 0 15px var(--cyan);
+      box-shadow: 0 0 20px var(--cyan);
     }
 
+    /* 科技感球拍圖示 */
+    .racket-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+      display: inline-block;
+      text-shadow: 0 0 15px var(--cyan), 0 0 30px var(--purple);
+      animation: pulseIcon 2s infinite alternate;
+    }
+    @keyframes pulseIcon { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
     h1 {
-      margin: 0 0 5px;
-      font-weight: 700;
-      font-size: 28px;
-      letter-spacing: 2px;
+      margin: 0 0 5px; font-weight: 700; font-size: 26px; letter-spacing: 2px;
       background: linear-gradient(90deg, #fff, var(--cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       text-transform: uppercase;
     }
 
     .sub-text {
-      color: var(--text-dim);
-      font-size: 12px;
-      letter-spacing: 4px; /* 拉寬間距更有科技感 */
-      text-transform: uppercase;
-      margin-bottom: 30px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding-bottom: 10px;
-      display: inline-block;
+      color: var(--text-dim); font-size: 12px; letter-spacing: 4px;
+      text-transform: uppercase; margin-bottom: 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: inline-block;
     }
 
-    /* --- 輸入框：終端機風格 --- */
+    /* --- 輸入框 --- */
     input {
-      width: 100%;
-      padding: 16px;
-      font-size: 18px;
-      font-family: 'Exo 2', sans-serif;
-      color: var(--cyan);
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(0, 243, 255, 0.3);
-      border-radius: 8px;
-      box-sizing: border-box;
-      outline: none;
-      margin-bottom: 15px;
-      text-align: center;
-      transition: 0.3s;
-      letter-spacing: 1px;
+      width: 100%; padding: 16px; font-size: 18px; font-family: 'Exo 2', sans-serif;
+      color: var(--cyan); background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(0, 243, 255, 0.3); border-radius: 8px;
+      box-sizing: border-box; outline: none; margin-bottom: 15px;
+      text-align: center; transition: 0.3s; letter-spacing: 1px;
     }
     input::placeholder { color: rgba(255, 255, 255, 0.2); letter-spacing: 0; }
-    input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-      background: rgba(0, 0, 0, 0.5);
-    }
+    input:focus { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); background: rgba(0, 0, 0, 0.5); }
 
-    /* --- 按鈕：霓虹漸層 --- */
+    /* --- 按鈕 --- */
     .btn {
-      width: 100%;
-      padding: 18px;
-      font-size: 18px;
-      font-weight: 700;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: 'Exo 2', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 15px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s;
+      width: 100%; padding: 18px; font-size: 18px; font-weight: 700; color: white;
+      border: none; border-radius: 8px; cursor: pointer; font-family: 'Exo 2', sans-serif;
+      text-transform: uppercase; letter-spacing: 2px; margin-top: 15px;
+      position: relative; overflow: hidden; transition: all 0.3s;
     }
-    
-    /* 藍紫漸層 */
     .btn-main {
       background: linear-gradient(135deg, var(--purple), #0062ff);
-      box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+      box-shadow: 0 0 25px rgba(188, 19, 254, 0.4);
     }
-    .btn-main:hover {
-      box-shadow: 0 0 30px rgba(188, 19, 254, 0.6);
-      transform: translateY(-2px);
-    }
+    .btn-main:hover { box-shadow: 0 0 40px rgba(188, 19, 254, 0.7); transform: translateY(-2px); }
 
-    /* 簽到按鈕：極致的青色光芒 */
     .btn-action {
-      background: transparent;
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+      background: transparent; border: 1px solid var(--cyan); color: var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
     }
-    .btn-action:hover {
-      background: var(--cyan);
-      color: #000;
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
-    }
+    .btn-action:hover { background: var(--cyan); color: #000; box-shadow: 0 0 40px rgba(0, 243, 255, 0.7); }
 
-    /* --- 核心：全像投影能量環 --- */
-    .holo-ring {
-      width: 160px;
-      height: 160px;
-      margin: 30px auto;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
+    /* --- 核心：全像投影乒乓球 (Holo-Ball) --- */
+    .holo-ball {
+      width: 160px; height: 160px; margin: 30px auto;
+      position: relative; display: flex; justify-content: center; align-items: center; flex-direction: column;
+      border-radius: 50%;
+      /* 球體基礎發光 */
+      background: radial-gradient(circle at 30% 30%, rgba(0, 243, 255, 0.8), rgba(0, 243, 255, 0.1) 60%, transparent 70%);
+      box-shadow: 0 0 50px rgba(0, 243, 255, 0.5), inset 0 0 20px rgba(0, 243, 255, 0.5);
+      overflow: hidden;
     }
     
-    /* 外圈旋轉光環 */
-    .holo-ring::before {
+    /* 球體表面的旋轉數位網格 */
+    .holo-ball::before {
       content: '';
       position: absolute;
-      width: 100%; height: 100%;
+      top: -50%; left: -50%; width: 200%; height: 200%;
+      background: 
+        linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 15px 15px; /* 網格大小 */
       border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: var(--cyan);
-      border-bottom-color: var(--purple);
-      animation: spin 3s linear infinite;
-      box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
-    }
-    /* 內圈靜態裝飾 */
-    .holo-ring::after {
-      content: '';
-      position: absolute;
-      width: 85%; height: 85%;
-      border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.2);
+      animation: spinBall 5s linear infinite;
+      opacity: 0.6;
+      mask-image: radial-gradient(circle, black 40%, transparent 70%); /* 讓網格只在球體中間清晰 */
     }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes spinBall { 
+      0% { transform: rotate(0deg) scale(1); } 
+      50% { transform: rotate(180deg) scale(1.1); } /* 微微呼吸效果 */
+      100% { transform: rotate(360deg) scale(1); } 
+    }
 
     .balance-num {
-      font-family: 'Teko', sans-serif; /* 數字專用字體 */
-      font-size: 72px;
-      line-height: 1;
-      color: #fff;
-      text-shadow: 0 0 10px var(--cyan);
-      z-index: 2;
+      font-family: 'Teko', sans-serif; font-size: 72px; line-height: 1; color: #fff;
+      text-shadow: 0 0 15px var(--cyan); z-index: 2;
     }
     .balance-label {
-      font-size: 12px;
-      color: var(--text-dim);
-      letter-spacing: 2px;
-      margin-top: -5px;
-      z-index: 2;
+      font-size: 12px; color: rgba(255,255,255,0.7); letter-spacing: 2px;
+      margin-top: -5px; z-index: 2; text-transform: uppercase;
     }
 
-    /* --- 歷史紀錄：數據流風格 --- */
+    /* --- 歷史紀錄 --- */
     .history-box {
-      margin-top: 30px;
-      text-align: left;
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-      padding: 15px 20px;
-      border-left: 2px solid var(--purple);
+      margin-top: 30px; text-align: left; background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px; padding: 15px 20px; border-left: 3px solid var(--purple);
     }
     .history-title {
-      font-size: 10px;
-      color: var(--purple);
-      margin-bottom: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      font-size: 11px; color: var(--purple); margin-bottom: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
     }
     .log-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: #d1d5db;
+      display: flex; justify-content: space-between; font-size: 14px; padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1); color: #d1d5db;
     }
-    .log-time { font-family: monospace; color: var(--cyan); opacity: 0.8; }
+    .log-time { font-family: monospace; color: var(--cyan); opacity: 0.9; }
     
     .btn-logout {
-      background: none; border: none; color: var(--text-dim);
-      margin-top: 25px; font-size: 12px; cursor: pointer;
-      text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+      background: none; border: none; color: var(--text-dim); margin-top: 25px;
+      font-size: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
     }
-    .btn-logout:hover { color: #fff; text-shadow: 0 0 5px #fff; }
+    .btn-logout:hover { color: #fff; text-shadow: 0 0 10px var(--cyan); }
 
     .hidden { display: none; }
 
-    /* SweetAlert 未來感客製化 */
+    /* SweetAlert 美化 */
     div:where(.swal2-container) div:where(.swal2-popup) {
-      background: #0a0c10 !important;
-      border: 1px solid var(--cyan);
-      box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
-      border-radius: 16px !important;
+      background: #0a0c10 !important; border: 1px solid var(--cyan);
+      box-shadow: 0 0 40px rgba(0, 243, 255, 0.2); border-radius: 16px !important;
     }
     div:where(.swal2-container) h2:where(.swal2-title) { color: #fff !important; font-family: 'Exo 2' !important; }
     div:where(.swal2-container) div:where(.swal2-html-container) { color: #aaa !important; }
     div:where(.swal2-container) button:where(.swal2-confirm) {
-      background: var(--cyan) !important; color: #000 !important; font-weight: bold;
-      box-shadow: 0 0 15px var(--cyan) !important;
-    }
-    div:where(.swal2-container) button:where(.swal2-cancel) {
-      background: transparent !important; border: 1px solid #555 !important; color: #fff !important;
+      background: var(--cyan) !important; color: #000 !important; font-weight: bold; box-shadow: 0 0 20px var(--cyan) !important;
     }
   </style>
 </head>
 <body>
 
   <div id="loginView" class="card">
-    <div style="font-size: 40px; margin-bottom: 15px; text-shadow: 0 0 20px var(--cyan);">⌘</div>
-    <h1>NEXUS SYSTEM</h1>
-    <div class="sub-text">IDENTITY VERIFICATION</div>
+    <div class="racket-icon">🏓</div>
+    <h1>NEXUS TABLE TENNIS</h1>
+    <div class="sub-text">PLAYER AUTHENTICATION</div>
     
     <input type="text" id="nameInput" placeholder="USERNAME // 姓名">
     <input type="tel" id="passInput" placeholder="PASSWORD // 密碼">
     
-    <button class="btn btn-main" onclick="processLogin()">LOGIN 登入系統</button>
+    <button class="btn btn-main" onclick="processLogin()">PLAYER LOGIN / 登入</button>
   </div>
 
   <div id="mainView" class="card hidden">
-    <h1 id="welcomeName" style="font-size: 22px;">COMMANDER</h1>
-    <div class="sub-text">SYSTEM ONLINE</div>
+    <h1 id="welcomeName" style="font-size: 22px;">PLAYER 1</h1>
+    <div class="sub-text">ARENA CONNECTED</div>
     
-    <div class="holo-ring">
+    <div class="holo-ball">
       <div class="balance-num" id="balanceDisplay">--</div>
-      <div class="balance-label">CREDITS</div>
+      <div class="balance-label">MATCH CREDITS</div>
     </div>
 
     <button class="btn btn-action" onclick="processCheckIn()">
-      INITIATE CHECK-IN // 執行簽到
+      EXECUTE SERVE // 執行發球(簽到)
     </button>
 
     <div class="history-box">
-      <div class="history-title">DATA LOGS_</div>
+      <div class="history-title">MATCH LOGS_</div>
       <div id="historyList">
-        <p style="color:var(--text-dim); font-size:12px; font-family:monospace;">> WAITING FOR DATA...</p>
+        <p style="color:var(--text-dim); font-size:12px; font-family:monospace;">> WAITING FOR SYNC...</p>
       </div>
     </div>
 
-    <button class="btn-logout" onclick="logout()">[ TERMINATE SESSION / 登出 ]</button>
+    <button class="btn-logout" onclick="logout()">[ DISCONNECT / 登出 ]</button>
   </div>
 
   <script>
@@ -328,7 +254,7 @@
       if (!isAuto) {
         Swal.fire({ 
           title: 'CONNECTING...', 
-          html: '正在建立加密連線',
+          html: '正在連線至球場數據庫',
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
           background: '#050505'
@@ -364,15 +290,15 @@
       const pass = localStorage.getItem("tt_pass");
 
       Swal.fire({
-        title: 'EXECUTE?',
-        text: "將扣除 1 點額度",
+        title: 'CONFIRM SERVE?',
+        text: "將扣除 1 場比賽額度",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonText: 'CONFIRM',
+        confirmButtonText: 'EXECUTE',
         cancelButtonText: 'ABORT'
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire({ title: 'PROCESSING...', didOpen: () => Swal.showLoading(), background: '#050505' });
+          Swal.fire({ title: 'PROCESSING...', html:'正在更新比賽數據...', didOpen: () => Swal.showLoading(), background: '#050505' });
           
           fetch(API_URL, {
             method: "POST",
@@ -383,9 +309,9 @@
           .then(data => {
             if (data.status !== 'error') {
               if(data.status === 'fail') {
-                 Swal.fire({title:'INSUFFICIENT FUNDS', text:data.msg, icon:'warning'});
+                 Swal.fire({title:'INSUFFICIENT CREDITS', text:data.msg, icon:'warning'});
               } else {
-                 Swal.fire({title:'SUCCESS', text:'簽到程序完成', icon:'success'});
+                 Swal.fire({title:'SERVE COMPLETE', text:'簽到完成，比賽開始', icon:'success'});
               }
               updateUI(name, data.balance, data.history);
             } else {
@@ -398,7 +324,7 @@
 
     // 4. 更新畫面
     function updateUI(name, balance, history) {
-      document.getElementById('welcomeName').innerText = name; // 顯示大名
+      document.getElementById('welcomeName').innerText = name;
       document.getElementById('balanceDisplay').innerText = balance;
       
       const list = document.getElementById('historyList');
@@ -413,7 +339,7 @@
             </div>`;
         });
       } else {
-        list.innerHTML = "<p style='color:var(--text-dim); font-size:12px; font-family:monospace;'>> NO RECORDS FOUND</p>";
+        list.innerHTML = "<p style='color:var(--text-dim); font-size:12px; font-family:monospace;'>> NO MATCH RECORDS</p>";
       }
     }
 
