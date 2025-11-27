@@ -3,256 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cyber-Pong 桌球系統</title>
+  <title>Q-Pong 桌球小幫手</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
-    /* --- Cyber-Pong 主題配色 --- */
+    /* --- Q版科技藍主題設定 --- */
     :root {
-      --neon-cyan: #00f2ff;       /* 科技藍 */
-      --neon-orange: #ff9d00;     /* 乒乓球橘 */
-      --table-blue: #0a0e17;      /* 深色球桌底 */
-      --net-color: rgba(255, 255, 255, 0.1);
-      --card-bg: rgba(20, 30, 50, 0.8);
+      --primary-blue: #4facfe;
+      --secondary-blue: #00f2fe;
+      --accent-color: #ff9a9e;
+      --text-color: #5b6b8a;
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
     body {
-      font-family: 'Rajdhani', sans-serif;
-      background-color: var(--table-blue);
-      /* 背景：模擬球桌網格 */
-      background-image: 
-        linear-gradient(var(--net-color) 1px, transparent 1px),
-        linear-gradient(90deg, var(--net-color) 1px, transparent 1px);
-      background-size: 40px 40px; /* 網格大小 */
+      font-family: 'Nunito', sans-serif; /* 圓潤字體 */
+      background-color: #a1c4fd;
+      /* 背景：柔和的藍色漸層 */
+      background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      color: #e0ffff;
-      letter-spacing: 1px;
-      overflow: hidden;
+      color: var(--text-color);
+      overflow: hidden; /* 防止泡泡超出 */
     }
 
-    /* 裝飾：中間模擬球網 (視覺背景) */
-    body::before {
-      content: '';
+    /* 背景飄浮泡泡動畫 (裝飾用) */
+    .bubble {
       position: absolute;
-      top: 0; bottom: 0; left: 50%;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent);
-      opacity: 0.3;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
       z-index: -1;
+      animation: float 10s infinite ease-in-out;
+    }
+    .b1 { width: 100px; height: 100px; top: 10%; left: 10%; animation-duration: 8s; }
+    .b2 { width: 150px; height: 150px; bottom: 15%; right: 10%; animation-duration: 12s; }
+    .b3 { width: 60px; height: 60px; top: 40%; right: 30%; animation-duration: 6s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-20px) scale(1.05); }
     }
 
+    /* --- 卡片容器 (像雲朵一樣白軟) --- */
     .card {
-      background: var(--card-bg);
+      background: rgba(255, 255, 255, 0.95);
       width: 85%;
-      max-width: 380px;
-      padding: 35px 30px;
-      border-radius: 20px;
+      max-width: 360px;
+      padding: 40px 30px;
+      border-radius: 40px; /* 超圓角 */
       text-align: center;
-      /* 邊框：左青右橘的撞色 */
-      border: 2px solid transparent;
-      background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, var(--neon-cyan), var(--neon-orange));
-      background-origin: border-box;
-      background-clip: content-box, border-box;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 
+        0 20px 50px rgba(79, 172, 254, 0.2), 
+        0 5px 15px rgba(0,0,0,0.05);
       backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
       position: relative;
+      z-index: 10;
     }
-
-    /* 頂部 ICON 動畫 (殺球感) */
-    .racket-icon {
-      font-size: 60px;
-      margin-bottom: 10px;
-      display: inline-block;
-      filter: drop-shadow(0 0 10px var(--neon-orange));
-      animation: smash 2s infinite ease-in-out;
-    }
-    @keyframes smash {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(-15deg) scale(1.1); }
-    }
+    /* 卡片微微浮動效果 */
+    .card:hover { transform: translateY(-5px); }
 
     h1 {
-      margin: 0 0 15px;
-      color: var(--neon-cyan);
-      font-size: 28px;
-      font-weight: 700;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+      margin: 0 0 10px;
+      color: #3b4d61;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 1px;
     }
     
-    .sub-text { font-size: 14px; color: #a0c0ff; margin-bottom: 25px; }
+    .sub-text { font-size: 14px; color: #8fa1b3; margin-bottom: 25px; font-weight: 700;}
 
-    /* 輸入框 */
+    /* Q版圖示 */
+    .icon-area {
+      font-size: 60px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 5px 10px rgba(79, 172, 254, 0.3));
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* --- 輸入框 (膠囊型) --- */
     input {
       width: 100%;
-      padding: 15px;
-      font-size: 18px;
-      font-family: 'Rajdhani', sans-serif;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      padding: 18px;
+      font-size: 16px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      border: 2px solid #edf2f7;
+      border-radius: 50px; /* 膠囊形狀 */
       box-sizing: border-box;
       outline: none;
       margin-bottom: 15px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.4);
-      color: var(--neon-orange); /* 輸入文字變橘色 */
+      background: #f7f9fc;
+      color: #5b6b8a;
       transition: 0.3s;
-      letter-spacing: 2px;
     }
+    input::placeholder { color: #cbd5e0; }
     input:focus {
-      border-color: var(--neon-orange);
-      box-shadow: 0 0 15px rgba(255, 157, 0, 0.3);
+      border-color: var(--primary-blue);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
     }
 
-    /* 按鈕 */
+    /* --- 按鈕 (果凍質感) --- */
     .btn {
       width: 100%;
       padding: 18px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #000;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 10px;
-      transition: 0.2s;
-    }
-    .btn-blue {
-      background: linear-gradient(90deg, var(--neon-cyan), #0062ff);
+      font-size: 18px;
+      font-weight: 900;
       color: white;
-      box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+      border: none;
+      border-radius: 50px; /* 膠囊形狀 */
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      margin-top: 10px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
     
-    /* 簽到按鈕：綠色球桌質感 */
-    .btn-green {
-      background: linear-gradient(90deg, #aaff00, #00ff9d); 
-      color: #0a0e17;
-      font-weight: 800;
-      box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
-      border: 1px solid #fff;
+    /* 藍色漸層按鈕 */
+    .btn-blue {
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
     }
-    .btn-green:active { transform: scale(0.98); }
+    .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(79, 172, 254, 0.4); }
+    .btn-blue:active { transform: scale(0.95); }
 
-    /* --- 核心：發光的橘色乒乓球 (顯示餘額) --- */
-    .ping-pong-ball {
-      width: 140px;
-      height: 140px;
-      background: radial-gradient(circle at 30% 30%, #ffcf70, #ff9d00, #a36200);
+    /* 綠色漸層按鈕 */
+    .btn-green {
+      background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+      box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+    }
+    .btn-green:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(67, 233, 123, 0.4); }
+    .btn-green:active { transform: scale(0.95); }
+
+    /* --- 果凍能量球 (餘額顯示) --- */
+    .jelly-ball {
+      width: 130px;
+      height: 130px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      margin: 25px auto;
-      color: #3e1e00; /* 深咖啡色字，像球上的標籤 */
+      margin: 20px auto;
+      color: white;
       box-shadow: 
-        inset -10px -10px 20px rgba(0,0,0,0.5), /* 球體立體感 */
-        0 0 30px rgba(255, 157, 0, 0.6); /* 外部橘色光暈 */
-      position: relative;
+        inset -10px -10px 20px rgba(0,0,0,0.1),
+        inset 10px 10px 20px rgba(255,255,255,0.4),
+        0 15px 30px rgba(79, 172, 254, 0.4);
+      animation: pulse 3s infinite ease-in-out;
     }
-    /* 球面上的星級標誌 (裝飾) */
-    .ping-pong-ball::after {
-      content: '★★★';
-      position: absolute;
-      bottom: 25px;
-      font-size: 10px;
-      color: rgba(62, 30, 0, 0.5);
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
-    .balance-num {
-      font-size: 56px;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .balance-label {
-      font-size: 12px;
-      font-weight: 700;
-      margin-top: 0;
-      opacity: 0.7;
-    }
+    .balance-num { font-size: 52px; font-weight: 900; line-height: 1; }
+    .balance-label { font-size: 13px; font-weight: 700; opacity: 0.9; margin-top: 5px; }
 
-    /* 歷史紀錄 */
+    /* --- 歷史紀錄 (氣泡框風格) --- */
     .history-box {
       text-align: left;
-      margin-top: 30px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.2);
-      padding-top: 15px;
+      margin-top: 25px;
+      background: #f7f9fc;
+      border-radius: 20px;
+      padding: 15px 20px;
     }
     .history-title {
-      font-size: 14px;
-      color: var(--neon-cyan);
+      font-size: 13px;
+      color: #8fa1b3;
       margin-bottom: 10px;
-      font-weight: bold;
+      font-weight: 800;
+      text-transform: uppercase;
     }
     .log-item {
       display: flex;
       justify-content: space-between;
       font-size: 14px;
       padding: 8px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: #ccc;
+      border-bottom: 2px solid #edf2f7;
+      color: #5b6b8a;
+      font-weight: 700;
     }
-    .log-time { font-family: monospace; color: var(--neon-orange); }
+    .log-item:last-child { border-bottom: none; }
+    .log-time { color: #a1c4fd; font-size: 12px; }
 
     .btn-logout {
       background: none; border: none; 
-      color: #666; 
-      margin-top:20px; font-size:12px; cursor:pointer;
-      text-transform: uppercase; letter-spacing: 1px;
+      color: #cbd5e0; 
+      margin-top: 20px; font-size: 13px; cursor: pointer;
+      font-weight: 700; transition: 0.3s;
     }
+    .btn-logout:hover { color: #ff9a9e; }
 
     .hidden { display: none; }
 
-    /* SweetAlert 風格化 */
+    /* SweetAlert Q版樣式修正 */
     div:where(.swal2-container) div:where(.swal2-popup) {
-      background: #0f1623 !important;
-      border: 2px solid var(--neon-orange);
+      border-radius: 30px !important;
+      font-family: 'Nunito', sans-serif !important;
     }
-    div:where(.swal2-container) h2:where(.swal2-title) { color: #fff !important; }
-    div:where(.swal2-container) div:where(.swal2-html-container) { color: #ccc !important; }
+    div:where(.swal2-container) button:where(.swal2-styled) {
+      border-radius: 20px !important;
+    }
   </style>
 </head>
 <body>
 
+  <div class="bubble b1"></div>
+  <div class="bubble b2"></div>
+  <div class="bubble b3"></div>
+
   <div id="loginView" class="card">
-    <div class="racket-icon">🏓</div>
-    <h1>桌球訓練中心</h1>
-    <p class="sub-text">PLAYER LOGIN // 學員登入</p>
+    <div class="icon-area">🏓</div>
+    <h1>桌球小幫手</h1>
+    <p class="sub-text">Hi！今天也來練球嗎？</p>
     
-    <input type="text" id="nameInput" placeholder="球員姓名 (NAME)">
-    <input type="tel" id="passInput" placeholder="通行密碼 (PASS)">
+    <input type="text" id="nameInput" placeholder="請輸入名字">
+    <input type="tel" id="passInput" placeholder="請輸入密碼">
     
-    <button class="btn btn-blue" onclick="processLogin()">進入球場</button>
+    <button class="btn btn-blue" onclick="processLogin()">登入查詢</button>
   </div>
 
   <div id="mainView" class="card hidden">
-    <h1 id="welcomeName" style="font-size: 22px; color:white;">READY PLAYER 1</h1>
+    <h1 id="welcomeName" style="font-size: 24px;">歡迎回來</h1>
+    <p class="sub-text" style="margin-bottom: 10px;">您的目前狀態</p>
     
-    <div class="ping-pong-ball">
+    <div class="jelly-ball">
       <div class="balance-num" id="balanceDisplay">--</div>
-      <div class="balance-label">CREDITS</div>
+      <div class="balance-label">剩餘次數</div>
     </div>
 
     <button class="btn btn-green" onclick="processCheckIn()">
-      SERVE // 發球簽到
+      ✨ 我要簽到
     </button>
 
     <div class="history-box">
-      <div class="history-title">MATCH LOGS // 訓練紀錄</div>
+      <div class="history-title">最近的紀錄</div>
       <div id="historyList">
-        <p style="color:#666; font-size:12px; text-align:center;">LOADING...</p>
+        <p style="color:#cbd5e0; font-size:12px; text-align:center;">讀取中...</p>
       </div>
     </div>
 
-    <button class="btn-logout" onclick="logout()">[ LEAVE COURT / 登出 ]</button>
+    <button class="btn-logout" onclick="logout()">切換帳號</button>
   </div>
 
   <script>
@@ -275,15 +278,14 @@
       const name = document.getElementById('nameInput').value.trim();
       const pass = document.getElementById('passInput').value.trim();
 
-      if (!name || !pass) return Swal.fire({title:'提示', text:'請輸入帳號密碼', icon:'warning', confirmButtonColor:'#ff9d00'});
+      if (!name || !pass) return Swal.fire({title:'哎呀', text:'記得輸入帳號密碼喔！', icon:'info', confirmButtonColor:'#4facfe'});
       
       if (!isAuto) {
         Swal.fire({ 
-          title: '連線中...', 
-          html: '正在進入球場...',
+          title: '讀取中...', 
+          html: '正在找尋您的資料',
           allowOutsideClick: false,
-          didOpen: () => Swal.showLoading(),
-          background: '#0a0e17', color: '#fff'
+          didOpen: () => Swal.showLoading()
         });
       }
 
@@ -304,10 +306,10 @@
           Swal.close();
         } else {
           if (isAuto) logout(); 
-          else Swal.fire({title:'登入失敗', text:data.msg, icon:'error', confirmButtonColor:'#ff00ff'});
+          else Swal.fire({title:'登入失敗', text: data.msg || '名字或密碼不對喔', icon:'error', confirmButtonColor:'#ff9a9e'});
         }
       })
-      .catch(err => Swal.fire({title:'連線錯誤', text:'無法連接伺服器', icon:'error'}));
+      .catch(err => Swal.fire({title:'連線錯誤', text:'網路好像有點問題', icon:'error'}));
     }
 
     // 3. 簽到邏輯
@@ -316,18 +318,17 @@
       const pass = localStorage.getItem("tt_pass");
 
       Swal.fire({
-        title: '準備發球？',
-        text: "將扣除 1 次訓練額度",
+        title: '確定簽到嗎？',
+        text: "會扣掉 1 次上課次數喔！",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#00ff9d',
-        cancelButtonColor: '#d33',
-        confirmButtonText: '是的，發球！',
-        cancelButtonText: '取消',
-        background: '#0a0e17', color: '#fff'
+        confirmButtonColor: '#43e97b',
+        cancelButtonColor: '#ff9a9e',
+        confirmButtonText: '沒問題！',
+        cancelButtonText: '等一下'
       }).then((result) => {
         if (result.isConfirmed) {
-          Swal.fire({ title: '紀錄中...', didOpen: () => Swal.showLoading(), background: '#0a0e17', color: '#fff' });
+          Swal.fire({ title: '紀錄中...', didOpen: () => Swal.showLoading() });
           
           fetch(API_URL, {
             method: "POST",
@@ -338,13 +339,13 @@
           .then(data => {
             if (data.status !== 'error') {
               if(data.status === 'fail') {
-                 Swal.fire({title:'額度不足', text:data.msg, icon:'warning', confirmButtonColor:'#ff9d00'});
+                 Swal.fire({title:'次數不夠囉', text:data.msg, icon:'warning', confirmButtonColor:'#ff9a9e'});
               } else {
-                 Swal.fire({title:'簽到成功', text:'祝您練球愉快！', icon:'success', confirmButtonColor:'#00ff9d'});
+                 Swal.fire({title:'簽到成功！', text:'祝您練球愉快～', icon:'success', confirmButtonColor:'#43e97b'});
               }
               updateUI(name, data.balance, data.history);
             } else {
-              Swal.fire({title:'失敗', text:data.msg, icon:'error', confirmButtonColor:'#ff00ff'});
+              Swal.fire({title:'失敗', text:data.msg, icon:'error', confirmButtonColor:'#ff9a9e'});
             }
           });
         }
@@ -353,7 +354,7 @@
 
     // 4. 更新畫面
     function updateUI(name, balance, history) {
-      document.getElementById('welcomeName').innerText = "選手：" + name;
+      document.getElementById('welcomeName').innerText = "嗨，" + name;
       document.getElementById('balanceDisplay').innerText = balance;
       
       const list = document.getElementById('historyList');
@@ -368,7 +369,7 @@
             </div>`;
         });
       } else {
-        list.innerHTML = "<p style='color:#666; font-size:12px; text-align:center;'>[ 尚無比賽紀錄 ]</p>";
+        list.innerHTML = "<p style='color:#cbd5e0; font-size:12px; text-align:center;'>還沒有紀錄喔</p>";
       }
     }
 
